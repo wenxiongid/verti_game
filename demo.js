@@ -105,7 +105,11 @@ requirejs([
     
     $charater.on(btnStartEvent, function(e){
       $charater.on(btnMoveEvent, function(e){
-        myCharater.moveTo(e.pageX);
+        var newX=e.pageX;
+        if(!newX){
+          newX=e.originalEvent.pageX;
+        }
+        myCharater.moveTo(newX);
       });
     });
 
