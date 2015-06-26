@@ -72,7 +72,7 @@ requirejs([
     $(window).on('resize orientationchange', function(){
       var $this=$(this),
         w=$this.width(),
-        h=$this.height(),
+        h=$this.height() * 0.8,
         newH=h/w*stageWidth;
       stage.height=newH;
       charater.height=newH;
