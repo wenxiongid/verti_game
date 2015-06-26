@@ -43,7 +43,7 @@ define([
     _this.ctx.clearRect(0, 0, _this.canvas.width, _this.canvas.height);
     _this.ctx.beginPath();
     _this.ctx.fillStyle='#c45';
-    _this.ctx.arc(_this.charaterX-50, _this.canvas.height - _this.option.hitPoint-50, 50, 0, 2 * Math.PI, true);
+    _this.ctx.arc(_this.charaterX, _this.canvas.height - _this.option.hitPoint, 50, 0, 2 * Math.PI, true);
     _this.ctx.fill();
     _this.ctx.closePath();
   };
