@@ -130,6 +130,10 @@ requirejs([
       $charater.off(btnMoveEvent);
     });
 
+    $(document).on('touchmove', function(e){
+      e.preventDefault();
+    });
+
     $('#startBtn').on(btnEndEvent, function(e){
       $('#mask').hide();
       timeline.start();
