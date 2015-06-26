@@ -61,6 +61,7 @@ requirejs([
 
     stage.width=stageWidth;
     charater.width=stageWidth;
+    var windowWidth;
     $(window).on('resize orientationchange', function(){
       var $this=$(this),
         w=$this.width(),
@@ -68,6 +69,7 @@ requirejs([
         newH=h/w*stageWidth;
       stage.height=newH;
       charater.height=newH;
+      windowWidth=w;
       if(w>h){
         timeline.pause();
       }else{
@@ -109,7 +111,7 @@ requirejs([
         if(!newX){
           newX=e.originalEvent.pageX;
         }
-        myCharater.moveTo(newX);
+        myCharater.moveTo(newX / windowWidth * stageWidth);
       });
     });
 
