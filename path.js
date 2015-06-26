@@ -43,16 +43,16 @@ define([
     _this.nodes=new_nodes;
 
     // draw lines
-    currentPoint=Math.round(currentPoint);
-    _this.ctx.translate(0, 0);
-    _this.ctx.beginPath();
-    while(currentPoint>0){
-      _this.ctx.moveTo(0, currentPoint);
-      _this.ctx.lineTo(_this.canvas.width, currentPoint);
-      currentPoint-=_this.gap;
-    }
-    _this.ctx.stroke();
-    _this.ctx.closePath();
+    // currentPoint=Math.round(currentPoint);
+    // _this.ctx.translate(0, 0);
+    // _this.ctx.beginPath();
+    // while(currentPoint>0){
+    //   _this.ctx.moveTo(0, currentPoint);
+    //   _this.ctx.lineTo(_this.canvas.width, currentPoint);
+    //   currentPoint-=_this.gap;
+    // }
+    // _this.ctx.stroke();
+    // _this.ctx.closePath();
   };
 
   Path.prototype.addNode=function(lineIndex, offset, type){
