@@ -38,30 +38,37 @@ requirejs([
       }),
       charaterAction='normal';
 
-    myPath.noteFrequence=7;
-    myPath.lineCount=3;
-    myPath.lastNode=myPath.canvas.width;
+    myPath.noteFrequence=0.03;// range (0, 1]
+    myPath.lineCount=stageWidth-20;
+    myPath.nodeStart=2000;
+    myPath.draw=function(d_offset){
+      var _this=this;
+      Path.prototype.draw.call(_this, d_offset);
+      _this.nodeStart=_this.offset + _this.canvas.height;
+    };
     myPath.addRandomNote=function(){
       var _this=this,
-        addLineIndex=Math.floor(Math.random()*(_this.lineCount+_this.noteFrequence));
+        addLineIndex=Math.floor(Math.random()*(_this.lineCount / _this.noteFrequence)),
+        nodeOffset=_this.nodeStart+(500+Math.floor(Math.random()*300));
       if(addLineIndex<_this.lineCount){
-        if(!_this.line[addLineIndex]){
-          _this.line[addLineIndex]=[];
+        if(nodeOffset<_this.offset+_this.canvas.height){
+          nodeOffset=_this.offset+_this.canvas.height;
         }
-        _this.lastNode=_this.lastNode+(500+Math.floor(Math.random()*300));
-        if(_this.lastNode<_this.offset+_this.canvas.width){
-          _this.lastNode=_this.offset+_this.canvas.width;
-        }
-        _this.line[addLineIndex].push(_this.lastNode);
+        _this.addNode(addLineIndex, nodeOffset, 1);
       }
     };
+    myCharater.hitPoint=0;
+    var $result=$('#result');
     myCharater.hit=function(){
-      alert('hit: ' + myPath.offset);
+      var _this=this;
+      _this.hitPoint++;
+      $result.text(_this.hitPoint);
     };
 
     stage.width=stageWidth;
     charater.width=stageWidth;
     var windowWidth;
+    var isResizePaused=false;
     $(window).on('resize orientationchange', function(){
       var $this=$(this),
         w=$this.width(),
@@ -71,9 +78,13 @@ requirejs([
       charater.height=newH;
       windowWidth=w;
       if(w>h){
+        isResizePaused=true;
         timeline.pause();
       }else{
-        timeline.start();
+        if(isResizePaused){
+          isResizePaused=false;
+          timeline.start();
+        }
       }
       myCharater.moveTo();
     }).trigger('resize');
@@ -84,7 +95,7 @@ requirejs([
       var current_d_offset=timeOffset-last_offset;
       myPath.draw(myCharater.speed*current_d_offset);
       last_offset=timeOffset;
-      // myPath.addRandomNote();
+      myPath.addRandomNote();
     });
 
     myCharater.moveTo();
@@ -119,6 +130,9 @@ requirejs([
       $charater.off(btnMoveEvent);
     });
 
-    timeline.start();
+    $('#startBtn').on(btnEndEvent, function(e){
+      $('#mask').hide();
+      timeline.start();
+    });
   });
 });

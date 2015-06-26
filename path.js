@@ -7,7 +7,7 @@ define([
     var _this=this;
     _this.canvas=canvas;
     _this.charater=charater;
-    _this.line={};
+    _this.nodes={};
     _this.width=canvas.width;
     _this.gap=1000;//test
     _this.ctx=_this.canvas.getContext('2d');
@@ -25,23 +25,24 @@ define([
     _this.offset=offset;
     _this.ctx.strokeStyle='#000';
     _this.ctx.lineWidth=5;
-    $.each(_this.line, function(i, line){
-      var new_line=[],
-        node_offset;
-      if(_this.option.lineInfo[i]){
-        while(line.length){
-          node_offset=line.splice(0,1)[0];
-          _this.checkHit(i, node_offset);
-          if(node_offset>=_this.offset){
-            new_line.push(node_offset);
-            if(node_offset<=_this.offset + _this.canvas.width){
-              _this.ctx.fillRect(node_offset- _this.offset, _this.option.lineInfo[i].y, 20, 20);
-            }
+
+    // draw nodes
+    var new_nodes=[],
+      node_info;
+    while(_this.nodes.length){
+      node_info=_this.nodes.splice(0,1)[0];
+      if(!_this.checkHit(node_info)){
+        if(node_info.offset>=_this.offset){
+          new_nodes.push(node_info);
+          if(node_info.offset<=_this.offset+_this.canvas.height){
+            _this.ctx.fillRect(node_info.line - 10, _this.canvas.height - (node_info.offset - _this.offset) - 20, 20, 20);
           }
         }
-        _this.line[i]=new_line;
       }
-    });
+    }
+    _this.nodes=new_nodes;
+
+    // draw lines
     currentPoint=Math.round(currentPoint);
     _this.ctx.translate(0, 0);
     _this.ctx.beginPath();
@@ -54,32 +55,30 @@ define([
     _this.ctx.closePath();
   };
 
-  Path.prototype.addNote=function(lineIndex, offset){
+  Path.prototype.addNode=function(lineIndex, offset, type){
     var _this=this;
-    _this.line[lineIndex].push(offset);
+    _this.nodes.push({
+      line: lineIndex,
+      offset: offset,
+      type: type
+    });
   };
 
-  Path.prototype.checkHit=function(lineIndex, note){
-    var _this=this;
-    _this.hitPoint=_this.offset + _this.charater.option.hitPoint;
-    if(note<=_this.hitPoint && note >= _this.hitPoint - 50){
-      switch(lineIndex){
-        case 0:
-        case '0':
-          if(_this.charater.line!='ground'){
-            _this.charater.hit();
-          }
-          break;
-        case 1:
-        case '1':
-          if(_this.charater.line!='air'){
-            _this.charater.hit();
-          }
-          break;
-        default:
-          // 
-      }
+  Path.prototype.checkHit=function(nodeInfo){
+    var _this=this,
+      isHit=false;
+    _this.hitPoint={
+      x: _this.charater.charaterX,
+      y: _this.offset + _this.charater.option.hitPoint
+    };
+    if(nodeInfo.offset<=_this.hitPoint.y &&
+        nodeInfo.offset>=_this.hitPoint.y - _this.charater.option.height &&
+        nodeInfo.line>= _this.hitPoint.x-_this.charater.option.width/2 &&
+        nodeInfo.line<= _this.hitPoint.x+_this.charater.option.width/2){
+      isHit=true;
+      _this.charater.hit();
     }
+    return isHit;
   };
 
   return Path;

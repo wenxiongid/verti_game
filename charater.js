@@ -15,12 +15,12 @@ define([
     _this.option=$.extend({
       speedBase: 1.5,
       speedTimes: 0.3,
-      hitPoint: 100,
+      hitPoint: 200,
       width: 100,
-      hegiht: 100
+      height: 100
     }, option || {});
     _this.charaterX=_this.canvas.width/2;
-    _this.charaterY=_this.canvas.hegiht - _this.option.hitPoint;
+    _this.charaterY=_this.canvas.height - _this.option.hitPoint;
     _this.updateSpeed();
   };
 
@@ -43,7 +43,7 @@ define([
     _this.ctx.clearRect(0, 0, _this.canvas.width, _this.canvas.height);
     _this.ctx.beginPath();
     _this.ctx.fillStyle='#c45';
-    _this.ctx.arc(_this.charaterX, _this.canvas.height - _this.option.hitPoint, 50, 0, 2 * Math.PI, true);
+    _this.ctx.arc(_this.charaterX, _this.canvas.height - _this.option.hitPoint + _this.option.height / 2, _this.option.height/2, 0, 2 * Math.PI, true);
     _this.ctx.fill();
     _this.ctx.closePath();
   };
