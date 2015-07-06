@@ -4,16 +4,12 @@ define(['helper'], function(Helper){
     _this.eventList={};
   };
 
-  EV.prototype.isFunction=function(fn){
-    return !!(fn && toString.call(fn)=='[object Function]');
-  };
-
   EV.prototype.bind=function(eventType, fn){
     var _this=this;
     if(!_this.eventList[eventType]){
       _this.eventList[eventType]=[];
     }
-    if(_this.isFunction(fn)){
+    if(Helper.isFunction(fn)){
       _this.eventList[eventType].push(fn);
     }
   };
@@ -25,7 +21,7 @@ define(['helper'], function(Helper){
     paramList.splice(0,1);
     if(eventList){
       for(var i=0; i<eventList.length;i++){
-        if(_this.isFunction(eventList[i])){
+        if(Helper.isFunction(eventList[i])){
           eventList[i].apply(_this, paramList);
         }
       }
