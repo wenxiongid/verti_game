@@ -122,6 +122,9 @@ requirejs([
         if(!newX){
           newX=e.originalEvent.pageX;
         }
+        if(newX==0){
+          newX=e.originalEvent.touches[0].pageX;
+        }
         myCharater.moveTo(newX / windowWidth * stageWidth);
       });
     });
