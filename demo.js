@@ -27,8 +27,9 @@ requirejs([
     var stageWidth=1000,
       stage=document.getElementById('gameStage'),
       charater=document.getElementById('charater'),
+      $charater=$('.charaterC'),
       timeline=new TimeLine(),
-      myCharater=new Character(charater),
+      myCharater=new Character($charater),
       myPath=new Path(stage, myCharater, {
         lineInfo: [{
           y: 350
@@ -67,8 +68,9 @@ requirejs([
 
     stage.width=stageWidth;
     charater.width=stageWidth;
-    var windowWidth;
-    var isResizePaused=false;
+    var windowWidth,
+      isResizePaused=false,
+      canvasZoom=1;
     $(window).on('resize orientationchange', function(){
       var $this=$(this),
         w=$this.width(),
@@ -77,6 +79,7 @@ requirejs([
       stage.height=newH;
       charater.height=newH;
       windowWidth=w;
+      canvasZoom=w/stageWidth;
       if(w>h){
         isResizePaused=true;
         timeline.pause();
@@ -86,6 +89,8 @@ requirejs([
           timeline.start();
         }
       }
+      myCharater.stageHeight=newH;
+      myCharater.zoom=canvasZoom;
       myCharater.moveTo();
     }).trigger('resize');
 
@@ -114,10 +119,10 @@ requirejs([
       }
     });
 
-    var $charater=$('#charater');
+    var $viewport=$('#viewport');
     
-    $charater.on(btnStartEvent, function(e){
-      $charater.on(btnMoveEvent, function(e){
+    $viewport.on(btnStartEvent, function(e){
+      $viewport.on(btnMoveEvent, function(e){
         var newX=e.pageX;
         if(!newX){
           newX=e.originalEvent.pageX;
@@ -125,12 +130,12 @@ requirejs([
         if(newX==0){
           newX=e.originalEvent.touches[0].pageX;
         }
-        myCharater.moveTo(newX / windowWidth * stageWidth);
+        myCharater.moveTo(newX / myCharater.zoom);
       });
     });
 
     $(window).on(btnEndEvent, function(e){
-      $charater.off(btnMoveEvent);
+      $viewport.off(btnMoveEvent);
     });
 
     $(document).on('touchmove', function(e){
