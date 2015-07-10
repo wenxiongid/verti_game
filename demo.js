@@ -26,49 +26,40 @@ requirejs([
     timeline=new TimeLine();
     var stageWidth=1000,
       stage=document.getElementById('gameStage'),
-      charater=document.getElementById('charater'),
+      // charater=document.getElementById('charater'),
       $charater=$('.charaterC'),
+      $nodeWrapper=$('#nodeWrapper'),
       timeline=new TimeLine(),
       myCharater=new Character($charater),
-      myPath=new Path(stage, myCharater, {
-        lineInfo: [{
-          y: 350
-        },{
-          y: 400
-        }]
+      myPath=new Path($nodeWrapper, myCharater, {
+        width: stageWidth
       }),
       charaterAction='normal';
 
-    myPath.noteFrequence=0.03;// range (0, 1]
+    myPath.noteFrequence=0.05;// range (0, 1]
     myPath.lineCount=stageWidth-20;
     myPath.nodeStart=2000;
-    myPath.draw=function(d_offset){
-      var _this=this;
-      Path.prototype.draw.call(_this, d_offset);
-      _this.nodeStart=_this.offset + _this.canvas.height;
-    };
     myPath.addRandomNote=function(){
       var _this=this,
+        startOffset=_this.offset+ _this.height,
         addLineIndex=Math.floor(Math.random()*(_this.lineCount / _this.noteFrequence)),
-        nodeOffset=_this.nodeStart+(500+Math.floor(Math.random()*300));
+        nodeOffset=startOffset+(500+Math.floor(Math.random()*300));
       if(addLineIndex<_this.lineCount){
-        if(nodeOffset<_this.offset+_this.canvas.height){
-          nodeOffset=_this.offset+_this.canvas.height;
-        }
         _this.addNode(addLineIndex, nodeOffset, 1);
       }
     };
-    myCharater.hitPoint=0;
+    // myCharater.hitPoint=0;
     var $result=$('#result');
     myCharater.hit=function(){
       var _this=this;
-      _this.hitPoint++;
-      $result.text(_this.hitPoint);
+      _this.point++;
+      $result.text(_this.point);
     };
 
     stage.width=stageWidth;
-    charater.width=stageWidth;
-    var windowWidth,
+    // charater.width=stageWidth;
+    var windowW,
+      windowH,
       isResizePaused=false,
       canvasZoom=1;
     $(window).on('resize orientationchange', function(){
@@ -77,8 +68,9 @@ requirejs([
         h=$this.height(),
         newH=h/w*stageWidth;
       stage.height=newH;
-      charater.height=newH;
-      windowWidth=w;
+      // charater.height=newH;
+      windowW=w;
+      windowH=h;
       canvasZoom=w/stageWidth;
       if(w>h){
         isResizePaused=true;
@@ -89,6 +81,8 @@ requirejs([
           timeline.start();
         }
       }
+      myPath.zoom=canvasZoom;
+      myPath.height=newH;
       myCharater.stageHeight=newH;
       myCharater.zoom=canvasZoom;
       myCharater.moveTo();
@@ -97,7 +91,8 @@ requirejs([
     var last_offset=0;
 
     timeline.bind('timeUpdate', function(timeOffset){
-      var current_d_offset=timeOffset-last_offset;
+      var current_d_offset=timeOffset-last_offset,
+        lane_offset=myPath.offset * myPath.zoom;
       myPath.draw(myCharater.speed*current_d_offset);
       last_offset=timeOffset;
       myPath.addRandomNote();
