@@ -98,7 +98,7 @@ requirejs([
       myPath.addRandomNote();
     });
 
-    myCharater.moveTo();
+    myCharater.moveTo($(window).width()/2);
 
     $('#pauseStartBtn').on(btnStartEvent, function(e){
       switch(timeline.status){
